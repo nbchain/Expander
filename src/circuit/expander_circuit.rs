@@ -1,3 +1,5 @@
+use std::fs;
+
 use arith::Field;
 use ark_std::test_rng;
 
@@ -119,10 +121,14 @@ unsafe impl<C> Send for Circuit<C> where C: GKRConfig {}
 
 impl<C: GKRConfig> Circuit<C> {
     pub fn load_circuit(filename: &str) -> Self {
-        let rc = RecursiveCircuit::<C>::load(filename).unwrap();
-        rc.flatten()
+        let file_bytes = fs::read(filename).unwrap();
+        Self::load_circuit_bytes(file_bytes).unwrap()
     }
 
+    pub fn load_circuit_bytes(bytes: Vec<u8>) -> std::result::Result<Self, CircuitError> {
+        let rc = RecursiveCircuit::<C>::load_bytes(bytes)?;
+        Ok(rc.flatten())
+    }
     pub fn log_input_size(&self) -> usize {
         self.layers[0].input_var_num
     }

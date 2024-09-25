@@ -232,10 +232,10 @@ pub struct RecursiveCircuit<C: GKRConfig> {
 const MAGIC_NUM: u64 = 3770719418566461763; // b'CIRCUIT4'
 
 impl<C: GKRConfig> RecursiveCircuit<C> {
-    pub fn load(filename: &str) -> std::result::Result<Self, CircuitError> {
+    pub fn load_bytes(bytes: Vec<u8>) -> std::result::Result<Self, CircuitError> {
         let mut ret = RecursiveCircuit::<C>::default();
-        let file_bytes = fs::read(filename)?;
-        let mut cursor = Cursor::new(file_bytes);
+
+        let mut cursor = Cursor::new(bytes);
 
         let magic_num = u64::deserialize_from(&mut cursor)?;
         assert_eq!(magic_num, MAGIC_NUM);
